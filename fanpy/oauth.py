@@ -113,8 +113,8 @@ class OAuth(Auth):
 
         key = self.consumer_secret + '&' + oauth_escape(self.token_secret)
 
-        hash = hmac.new(key.encode(), message.encode(), hashlib.sha1)
-        signature = base64.b64encode(hash.digest())
+        hash_obj = hmac.new(key.encode(), message.encode(), hashlib.sha1)
+        signature = base64.b64encode(hash_obj.digest())
 
         return enc_params + '&' + 'oauth_signature=' + oauth_escape(signature)
 

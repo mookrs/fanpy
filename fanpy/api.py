@@ -67,7 +67,7 @@ class FanfouHTTPError(FanfouError):
         if len(data) == 0:
             data = {}
         else:
-            data = data.decode('utf8')
+            data = data.decode('utf-8')
             if self.format == 'json':
                 try:
                     data = json.loads(data)
@@ -89,19 +89,9 @@ class FanfouResponse(object):
     """
 
     @property
-    def rate_limit_remaining(self):
-        """Remaining requests in the current rate-limit."""
-        return int(self.headers.get('X-Rate-Limit-Remaining', '0'))
-
-    @property
-    def rate_limit_limit(self):
-        """The rate limit ceiling for that given request."""
-        return int(self.headers.get('X-Rate-Limit-Limit', '0'))
-
-    @property
-    def rate_limit_reset(self):
-        """Time in UTC epoch seconds when the rate limit will reset."""
-        return int(self.headers.get('X-Rate-Limit-Reset', '0'))
+    def x_auth_user(self):
+        """The X-AuthUser for that request."""
+        return self.headers.get('X-AuthUser', '')
 
 
 class FanfouDictResponse(dict, FanfouResponse):
@@ -139,7 +129,7 @@ def build_uri(orig_uriparts, kwargs):
     """
     Build the URI from the original uriparts and kwargs. Modifies kwargs.
 
-    :param orig_uriparts: eg: ('1.1', 'statuses', 'user_timeline')
+    :param orig_uriparts: eg: ('statuses', 'user_timeline')
     :param kwargs: eg: {'_id': 'ifanfou'}
     """
     uriparts = []
@@ -156,14 +146,14 @@ def build_uri(orig_uriparts, kwargs):
     # If an id kwarg is present and there is no id to fill in in
     # the list of uriparts, assume the id goes at the end.
     id = kwargs.pop('id', None)
-    if id is not None:
+    if id:
         uri += '/{}'.format(id)
 
     # eg: `fanfou.statuses.update(status='Hello, world!')` to
-    # `1.1/statuses/update`
+    # `statuses/update`
     # eg: `fanfou.statuses.user_timeline._id(_id='ifanfou')` or
-    # `fanfou.statuses.user_timeline(_id='ifanfou')` to
-    # `1.1/statuses/user_timeline/ifanfou`
+    # `fanfou.statuses.user_timeline(id='ifanfou')` to
+    # `statuses/user_timeline/ifanfou`
     return uri
 
 
@@ -220,29 +210,23 @@ class FanfouCall(object):
         method = kwargs.pop('_method', None) or method_for_uri(uri)
         domain = self.domain
 
-        # If an _id kwarg is present, this is treated as id as a CGI param.
+        # If an _id kwarg is present, this is treated as id as a CGI
+        # param.
         _id = kwargs.pop('_id', None)
-        if _id is not None:
+        if _id:
             kwargs['id'] = _id
 
         # If an _timeout is specified in kwargs, use it.
         _timeout = kwargs.pop('_timeout', None)
 
-        secure_str = ''
-        if self.secure:
-            secure_str = 's'
-
-        dot = ''
-        if self.format:
-            dot = '.'
+        secure_str = 's' if self.secure else ''
+        dot = '.' if self.format else ''
 
         # eg: http://api.fanfou.com/1.1/statuses/update.json
         url_base = 'http{}://{}/{}{}{}'.format(
             secure_str, domain, uri, dot, self.format)
 
-        photo = None
-        if 'photo' in kwargs:
-            photo = kwargs.pop('photo')
+        photo = kwargs.pop('photo', None)
 
         headers = {'Accept-Encoding': 'gzip'} if self.gzip else dict()
         body = None
@@ -295,6 +279,7 @@ class FanfouCall(object):
         # id=ifanfou&oauth_consumer_key=<consumer_key>&oauth_nonce=<oauth_nonce>
         # &oauth_signature_method=HMAC-SHA1&oauth_timestamp=<oauth_timestamp>
         # &oauth_token=<oauth_token>&oauth_version=1.0&oauth_signature=<oauth_signature>
+        # or `http://api.fanfou.com/statuses/update.json`
         req = urllib_request.Request(url_base, data=body, headers=headers)
         if self.retry:
             return self._handle_response_with_retry(req, uri, arg_data, _timeout)
@@ -323,11 +308,11 @@ class FanfouCall(object):
             if len(data) == 0:
                 return wrap_response({}, handle.headers)
             elif 'json' == self.format:
-                res = json.loads(data.decode('utf8'))
+                res = json.loads(data.decode('utf-8'))
                 return wrap_response(res, handle.headers)
             else:
                 return wrap_response(
-                    data.decode('utf8'), handle.headers)
+                    data.decode('utf-8'), handle.headers)
         except urllib_error.HTTPError as e:
             if (e.code == 304):
                 return []
@@ -375,7 +360,7 @@ class Fanfou(FanfouCall):
         f.statuses.home_timeline()
 
         # Get a particular friend's timeline
-        f.statuses.user_timeline(_id='ifanfou')
+        f.statuses.user_timeline(id='ifanfou')
 
         # To pass in GET/POST parameters, such as `count`
         f.statuses.home_timeline(count=5)
@@ -402,7 +387,7 @@ class Fanfou(FanfouCall):
         with open('example.png', 'rb') as imagefile:
             imagedata = imagefile.read()
         # - Then send the image with a status.
-        fanfou.photos.upload(photo=imagedata, status='Upload image.'')
+        fanfou.photos.upload(photo=imagedata, status='Upload image.')
 
 
     Using the data returned
@@ -465,7 +450,7 @@ class Fanfou(FanfouCall):
             auth = NoAuth()
 
         if (format not in ('json', 'xml', '')):
-            raise ValueError("Unknown data format '{}'".format(format))
+            raise ValueError('Unknown data format "{}"'.format(format))
 
         if api_version is _DEFAULT:
             api_version = '1.1'
