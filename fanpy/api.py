@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+from __future__ import print_function, unicode_literals
 
 try:
     import http.client as http_client
@@ -30,7 +30,7 @@ from time import sleep, time
 
 from .auth import NoAuth
 from .fanfou_globals import POST_ACTIONS
-from .util import PY_3, actually_bytes
+from .util import PY3, actually_bytes
 
 
 class _DEFAULT(object):
@@ -286,7 +286,7 @@ class FanfouCall(object):
             headers['Content-Type'] = \
                 b'multipart/form-data; boundary=' + BOUNDARY
 
-            if not PY_3:
+            if not PY3:
                 url_base = url_base.encode('utf-8')
                 for k in headers:
                     headers[actually_bytes(k)] = actually_bytes(headers.pop(k))

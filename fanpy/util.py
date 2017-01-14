@@ -1,17 +1,13 @@
 """Internal utility functions."""
-import contextlib
-import re
+
 import sys
-import textwrap
-import time
-import socket
 
 
-PY_3 = sys.version_info >= (3, 0)
+PY3 = sys.version_info >= (3, 0)
 
 
 def actually_bytes(stringy):
-    if PY_3:
+    if PY3:
         if type(stringy) == bytes:
             pass
         elif type(stringy) != str:

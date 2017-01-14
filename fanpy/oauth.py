@@ -49,7 +49,7 @@ from random import getrandbits
 from time import time
 
 from .auth import Auth, MissingCredentialsError
-from .util import PY_3
+from .util import PY3
 
 try:
     from urllib.parse import quote, urlencode
@@ -90,6 +90,12 @@ class OAuth(Auth):
                 'You must supply strings for token_secret and consumer_secret, not None.')
 
     def encode_params(self, base_url, method, params):
+        """
+
+        :param base_url: eg: http://api.fanfou.com/statuses/update.json
+        :param method: GET or POST or others
+        :param params: eg: {'status': 'test'}
+        """
         params = params.copy()
 
         if self.token:
@@ -102,17 +108,15 @@ class OAuth(Auth):
         params['oauth_nonce'] = str(getrandbits(64))
 
         enc_params = urlencode_noplus(sorted(params.items()))
-
-        key = self.consumer_secret + '&' + quote(self.token_secret, safe='~')
-
         message = '&'.join(
-            quote(i, safe='~') for i in [method.upper(), base_url, enc_params])
+            oauth_escape(i) for i in [method.upper(), base_url, enc_params])
 
-        signature = base64.b64encode(hmac.new(
-            key.encode('ascii'), message.encode('ascii'), hashlib.sha1)
-            .digest())
+        key = self.consumer_secret + '&' + oauth_escape(self.token_secret)
 
-        return enc_params + '&' + 'oauth_signature=' + quote(signature, safe='~')
+        hash = hmac.new(key.encode(), message.encode(), hashlib.sha1)
+        signature = base64.b64encode(hash.digest())
+
+        return enc_params + '&' + 'oauth_signature=' + oauth_escape(signature)
 
     def generate_headers(self):
         return {}
@@ -123,7 +127,7 @@ class OAuth(Auth):
 # So here is a specialized version which does exactly that.
 # In Python2, since there is no safe option for urlencode, we force it by hand.
 def urlencode_noplus(query):
-    if not PY_3:
+    if not PY3:
         new_query = []
         TILDE = '____TILDE____'
         for k, v in query:
@@ -137,3 +141,7 @@ def urlencode_noplus(query):
         return urlencode(new_query).replace(TILDE, '~').replace('+', '%20')
 
     return urlencode(query, safe='~').replace('+', '%20')
+
+
+def oauth_escape(val):
+    return quote(val, safe='~')

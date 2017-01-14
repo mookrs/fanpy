@@ -7,14 +7,18 @@ except ImportError:
 class Auth(object):
     """ABC for Authenticator objects."""
     def encode_params(self, base_url, method, params):
-        """Encode parameters for a request suitable for including in a URL
+        """
+        Encode parameters for a request suitable for including in a URL
         or POST body. This method may also add new params to the request
-        if required by the authentication scheme in use."""
+        if required by the authentication scheme in use.
+        """
         raise NotImplementedError()
 
     def generate_headers(self):
-        """Generates headers which should be added to the request if required
-        by the authentication scheme in use."""
+        """
+        Generates headers which should be added to the request if required
+        by the authentication scheme in use.
+        """
         raise NotImplementedError()
 
 
