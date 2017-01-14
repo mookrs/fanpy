@@ -39,6 +39,8 @@ code it all goes like this:
 
 """
 
+from __future__ import print_function
+
 import base64
 import hashlib
 import hmac
@@ -101,8 +103,6 @@ class OAuth(Auth):
 
         enc_params = urlencode_noplus(sorted(params.items()))
 
-        # Replace special characters in string using the %xx escape.
-        # Letters, digits, and the characters '_.-' are never quoted.
         key = self.consumer_secret + '&' + quote(self.token_secret, safe='~')
 
         message = '&'.join(
@@ -116,6 +116,7 @@ class OAuth(Auth):
 
     def generate_headers(self):
         return {}
+
 
 # Apparently contrary to the HTTP RFCs, spaces in arguments must be encoded as
 # '%20' rather than '+' when constructing an OAuth signature.
