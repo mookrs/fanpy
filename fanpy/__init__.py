@@ -10,3 +10,5 @@ __all__ = [
     'FanfouHTTPError',
     'FanfouResponse',
     ]
+
+__version__ = '0.1.0'
