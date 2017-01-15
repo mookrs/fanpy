@@ -243,14 +243,15 @@ class FanfouCall(object):
             else:
                 body = arg_data.encode('utf-8')
 
+        # See: http://www.ietf.org/rfc/rfc1867.txt
         if photo:
             BOUNDARY = b'###Python-Fanfou###'
             bod = []
             bod.append(b'--' + BOUNDARY)
             # Never omit `filename`, otherwise will meet 'lack of photo parameter' or else errors.
             bod.append(
-                b'Content-Disposition: form-data; name="'
-                + b'photo"; filename="filename"')
+                b'Content-Disposition: form-data; name="photo"; '
+                + b'filename="filename"')
             bod.append(b'Content-Type: application/octet-stream')
             bod.append(b'')
             bod.append(actually_bytes(photo))
