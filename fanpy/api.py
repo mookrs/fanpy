@@ -164,7 +164,7 @@ class FanfouCall(object):
 
     def __init__(
             self, auth, format, domain, callable_cls, uri='',
-            uriparts=None, secure=False, timeout=None, gzip=False, retry=False):
+            uriparts=None, secure=False, timeout=None, gzip=False):
         self.auth = auth
         self.format = format
         self.domain = domain
@@ -174,7 +174,6 @@ class FanfouCall(object):
         self.secure = secure
         self.timeout = timeout
         self.gzip = gzip
-        self.retry = retry
 
     # object.__getattr__(self, name)
     # Called when an attribute lookup has not found the attribute in the
@@ -193,7 +192,7 @@ class FanfouCall(object):
                 return self.callable_cls(
                     auth=self.auth, format=self.format, domain=self.domain,
                     callable_cls=self.callable_cls, secure=self.secure,
-                    timeout=self.timeout, gzip=self.gzip, retry=self.retry,
+                    timeout=self.timeout, gzip=self.gzip,
                     uriparts=self.uriparts + (arg,))
             if k == '_':
                 return extend_call
@@ -282,10 +281,7 @@ class FanfouCall(object):
         # &oauth_token=<oauth_token>&oauth_version=1.0&oauth_signature=<oauth_signature>
         # or `http://api.fanfou.com/statuses/update.json`
         req = urllib_request.Request(url_base, data=body, headers=headers)
-        if self.retry:
-            return self._handle_response_with_retry(req, uri, arg_data, _timeout)
-        else:
-            return self._handle_response(req, uri, arg_data, _timeout)
+        return self._handle_response(req, uri, arg_data, _timeout)
 
     def _handle_response(self, req, uri, arg_data, _timeout=None):
         kwargs = {}
@@ -294,6 +290,7 @@ class FanfouCall(object):
         try:
             handle = urllib_request.urlopen(req, **kwargs)
             if handle.headers['Content-Type'] in ['image/jpeg', 'image/png', 'image/gif']:
+                print(handle.headers['Content-Type'])
                 return handle
             try:
                 data = handle.read()
@@ -319,34 +316,6 @@ class FanfouCall(object):
                 return []
             else:
                 raise FanfouHTTPError(e, uri, self.format, arg_data)
-
-    def _handle_response_with_retry(self, req, uri, arg_data, _timeout=None):
-        retry = self.retry
-        while retry:
-            try:
-                return self._handle_response(req, uri, arg_data, _timeout)
-            except FanfouHTTPError as e:
-                if e.e.code == 429:
-                    # API rate limit reached
-                    reset = int(e.e.headers.get(
-                        'X-Rate-Limit-Reset', time() + 30))
-                    # add some extra margin
-                    delay = int(reset - time() + 2)
-                    if delay <= 0:
-                        delay = self.FANFOU_UNAVAILABLE_WAIT
-                    print('API rate limit reached; waiting for {}s...'
-                        .format(delay, file=sys.stderr))
-                elif e.e.code in (502, 503, 504):
-                    delay = self.FANFOU_UNAVAILABLE_WAIT
-                    print('Service unavailable; waiting for {}s...'
-                        .format(delay, file=sys.stderr))
-                else:
-                    raise
-                if isinstance(retry, int) and not isinstance(retry, bool):
-                    if retry <= 0:
-                        raise
-                    retry -= 1
-                sleep(delay)
 
 
 class Fanfou(FanfouCall):
@@ -421,7 +390,7 @@ class Fanfou(FanfouCall):
     def __init__(
             self, auth=None, format='json',
             domain='api.fanfou.com', secure=False,
-            api_version=None, retry=False):
+            api_version=None):
         """
         Create a new fanfou API connector.
 
@@ -441,11 +410,6 @@ class Fanfou(FanfouCall):
 
         `api_version` is used to set the base uri. By default it's
         None.
-
-        If `retry` is True, API rate limits will automatically be
-        handled by waiting until the next reset, as indicated by
-        the X-Rate-Limit-Reset HTTP header. If retry is an integer,
-        it defines the number of retries attempted.
         """
         if not auth:
             auth = NoAuth()
@@ -463,7 +427,7 @@ class Fanfou(FanfouCall):
         FanfouCall.__init__(
             self, auth=auth, format=format, domain=domain,
             callable_cls=FanfouCall,
-            secure=secure, uriparts=uriparts, retry=retry)
+            secure=secure, uriparts=uriparts)
 
 
 # If a package's `__init__.py` code defines a list named `__all__`,
