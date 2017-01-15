@@ -9,15 +9,19 @@
 
 from .api import Fanfou, FanfouError, FanfouHTTPError, FanfouResponse
 from .auth import NoAuth
-from .oauth import OAuth
+from .oauth import OAuth, read_token_file, write_token_file
+from .oauth_dance import oauth_dance
 
 __all__ = [
-    'NoAuth',
-    'OAuth',
-    'Fanfou',
-    'FanfouError',
-    'FanfouHTTPError',
-    'FanfouResponse',
+    "NoAuth",
+    "OAuth",
+    "oauth_dance",
+    "read_token_file",
+    "Fanfou",
+    "FanfouError",
+    "FanfouHTTPError",
+    "FanfouResponse",
+    "write_token_file",
 ]
 
 __version__ = '0.1.0'
