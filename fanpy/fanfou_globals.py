@@ -6,22 +6,30 @@
 POST_ACTIONS = [
 
     # Status Methods
-    'statuses/destroy', 'statuses/update', 'statuses/',
+    'statuses/update',
 
-    # Photo Methods
-    'photos/upload',
-
-    # Direct Message Methods
-    'direct_messages/destroy', 'direct_messages/new',
+    # Direct-messages Methods
+    'new',
 
     # Account Methods
-    'account/find_friends', 'account/update_notify_num', 'account/update_profile', 'account/update_profile_image',
+    'update_notify_num', 'update_profile', 'update_profile_image',
 
-    # Block Methods, Friendship Methods, Favorite Methods, Search Methods
-    'blocks/create', 'blocks/destroy',
-    'friendships/accept', 'friendships/create', 'friendships/', 'friendships/deny', 'friendships/destroy',
-    'favorites/create', 'favourites/', 'favorites/destroy',
-    'saved_searches/create',
+    # Blocks Methods, Friendships Methods, Favorites Methods,
+    # Saved-searches Methods
+    'create',
+
+    # Statuses Methods, Blocks Methods, Direct-messages Methods,
+    # Friendships Methods, Favorites Methods, Saved-searches Methods
+    'destroy',
+
+    # Friendships Methods
+    'accept', 'deny',
+
+    # Users Methods
+    'cancel_recommendation',
+
+    # Photo Methods
+    'upload',
 
     # OAuth Methods
     'token', 'access_token',
