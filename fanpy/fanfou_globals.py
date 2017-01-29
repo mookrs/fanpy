@@ -1,12 +1,11 @@
 """
     List of Fanfou method names that require the use of POST.
-    Don't use '/' before method name.
 """
 
 POST_ACTIONS = [
 
     # Status Methods
-    'statuses/update',
+    'update',
 
     # Direct-messages Methods
     'new',

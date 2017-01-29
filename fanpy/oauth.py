@@ -125,7 +125,7 @@ class OAuth(Auth):
 # Apparently contrary to the HTTP RFCs, spaces in arguments must be encoded as
 # '%20' rather than '+' when constructing an OAuth signature.
 # So here is a specialized version which does exactly that.
-# In Python2, since there is no safe option for urlencode, we force it by hand.
+# In Python 2, since there is no safe option for urlencode, we force it by hand.
 def urlencode_noplus(query):
     if not PY3:
         new_query = []

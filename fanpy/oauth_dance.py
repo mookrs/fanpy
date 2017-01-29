@@ -1,15 +1,15 @@
 from __future__ import print_function
 
+try:
+    input = raw_input
+except NameError:
+    pass
+
 import webbrowser
 import time
 
 from .api import Fanfou, json
 from .oauth import OAuth, write_token_file
-
-try:
-    input = raw_input
-except NameError:
-    pass
 
 
 def get_oauth_pin(oauth_url, open_browser=True):
@@ -65,27 +65,24 @@ def oauth_dance(app_name, consumer_key, consumer_secret, token_filename=None, op
     By default, this function attempts to open a browser to request access. If
     `open_browser` is false it will just print the URL instead.
     """
-    print('Hi there! We\'re gonna get you all set up to use {}.'.format(app_name))
+    print("Hi there! We're gonna get you all set up to use {}.".format(app_name))
     fanfou = Fanfou(
         auth=OAuth('', '', consumer_key, consumer_secret),
-        format='', domain='fanfou.com', api_version=None)
+        format='', domain='fanfou.com')
     oauth_token, oauth_token_secret = parse_oauth_tokens(
         fanfou.oauth.request_token(oauth_callback='oob'))
     oauth_url = 'http://fanfou.com/oauth/authorize?oauth_token=' + oauth_token
     oauth_verifier = get_oauth_pin(oauth_url, open_browser)
 
     fanfou = Fanfou(
-        auth=OAuth(
-            oauth_token, oauth_token_secret, consumer_key, consumer_secret),
-        format='', domain='fanfou.com', api_version=None)
+        auth=OAuth(oauth_token, oauth_token_secret, consumer_key, consumer_secret),
+        format='', domain='fanfou.com')
     oauth_token, oauth_token_secret = parse_oauth_tokens(
         fanfou.oauth.access_token(oauth_verifier=oauth_verifier))
     if token_filename:
-        write_token_file(
-            token_filename, oauth_token, oauth_token_secret)
+        write_token_file(token_filename, oauth_token, oauth_token_secret)
         print()
-        print('That\'s it! Your authorization keys have been written to {}.'
-            .format(token_filename))
+        print("That's it! Your authorization keys have been written to {}.".format(token_filename))
     return oauth_token, oauth_token_secret
 
 
