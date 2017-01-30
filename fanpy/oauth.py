@@ -7,7 +7,7 @@ This will get you a CONSUMER_KEY and CONSUMER_SECRET.
 
 When users run your application they have to authenticate your app
 with their Fanfou account. A few HTTP calls to Fanfou are required
-to do this. Please see the fanfou.oauth_dance module to see how this
+to do this. Please see the fanpy.oauth_dance module to see how this
 is done. If you are making a command-line app, you can use the
 oauth_dance() function directly.
 

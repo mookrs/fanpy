@@ -326,7 +326,7 @@ class Fanfou(FanfouCall):
         f.statuses.home_timeline()
 
         # Get a particular friend's timeline
-        f.statuses.user_timeline(id='ifanfou')
+        f.statuses.user_timeline(_id='ifanfou')
 
         # To pass in GET/POST parameters, such as `count`
         f.statuses.home_timeline(count=5)
