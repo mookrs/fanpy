@@ -84,10 +84,11 @@ try:
 except ImportError:
     import html.parser as HTMLParser
 
+from . import ansi
 from .api import Fanfou, FanfouError
 from .oauth import OAuth, read_token_file
 from .oauth_dance import oauth_dance
-from .util import print_nicely, align_text
+from .util import print_nicely
 
 CONSUMER_KEY = ''
 CONSUMER_SECRET = ''
@@ -110,7 +111,7 @@ OPTIONS = {
 }
 
 html_parser = HTMLParser.HTMLParser()
-hashtag_re = re.compile(r'(?P<hashtag>#\S+)')
+hashtag_re = re.compile(r'(?P<hashtag>#\S+#)')
 profile_re = re.compile(r'(?P<profile>\@\S+)')
 
 
@@ -189,30 +190,6 @@ def get_time_string(created_at, options, format='%a %b %d %H:%M:%S +0000 %Y'):
     return ''
 
 
-def reRepl(m):
-    ansiTypes = {
-        'clear':   ansiFormatter.cmdReset(),
-        'hashtag': ansiFormatter.cmdBold(),
-        'profile': ansiFormatter.cmdUnderline(),
-        }
-
-    s = None
-    try:
-        mkey = m.lastgroup
-        if m.group(mkey):
-            s = '%s%s%s' % (ansiTypes[mkey], m.group(mkey), ansiTypes['clear'])
-    except IndexError:
-        pass
-    return s
-
-
-def replace_in_status(status):
-    txt = html_parser.unescape(status)
-    txt = re.sub(hashtag_re, reRepl, txt)
-    txt = re.sub(profile_re, reRepl, txt)
-    return txt
-
-
 class StatusFormatter(object):
     def __call__(self, status, options):
         return '{}@{} {}'.format(
@@ -244,15 +221,38 @@ class URLStatusFormatter(object):
 
 class AnsiStatusFormatter(object):
     def __init__(self):
-        self._colourMap = ansi.ColourMap()
+        self.color_map = ansi.ColorMap()
 
     def __call__(self, status, options):
-        colour = self._colourMap.colourFor(status['user']['screen_name'])
-        return ("%s%s% 16s%s %s " % (
+        color = self.color_map.color_for(status['user']['screen_name'])
+        return '{}{}{}{} {} '.format(
             get_time_string(status['created_at'], options),
-            ansiFormatter.cmdColour(colour), status['user']['screen_name'],
-            ansiFormatter.cmdReset(),
-            align_text(replace_in_status(status['text']))))
+            ansi_formatter.cmd_color(color),
+            status['user']['screen_name'],
+            ansi_formatter.cmd_reset(),
+            self.replace_in_status(status['text']))
+
+    def replace_in_status(self, status):
+        txt = html_parser.unescape(status)
+        txt = re.sub(hashtag_re, self.repl, txt)
+        txt = re.sub(profile_re, self.repl, txt)
+        return txt
+
+    def repl(self, match):
+        ansi_types = {
+            'clear': ansi_formatter.cmd_reset(),
+            'hashtag': ansi_formatter.cmd_bold(),
+            'profile': ansi_formatter.cmd_underline(),
+            }
+
+        s = None
+        try:
+            key = match.lastgroup
+            if match.group(key):
+                s = '{}{}{}'.format(ansi_types[key], match.group(key), ansi_types['clear'])
+        except IndexError:
+            pass
+        return s
 
 
 class AdminFormatter(object):
@@ -314,10 +314,10 @@ def get_formatter(action_type, options):
 
 class Action(object):
     def ask(self, subject='perform this action', careful=False):
-        '''Requests from the user using `input` if `subject` should be
+        """Requests from the user using `input` if `subject` should be
         performed. When `careful`, the default answer is NO, otherwise YES.
         Returns the user answer in the form `True` or `False`.
-        '''
+        """
         sample = '(y/N)' if careful else '(Y/n)'
         prompt = 'You really want to {} {}? '.format(subject, sample)
         try:
@@ -491,8 +491,8 @@ def main(args=sys.argv[1:]):
     if options['action'] == 'authorize' or not os.path.exists(oauth_filename):
         oauth_dance('The Command-Line Tool', CONSUMER_KEY, CONSUMER_SECRET, oauth_filename)
 
-    # global ansiFormatter
-    # ansiFormatter = ansi.AnsiCmd(options['force-ansi'])
+    global ansi_formatter
+    ansi_formatter = ansi.AnsiCmd(options['force-ansi'])
 
     oauth_token, oauth_token_secret = read_token_file(oauth_filename)
     fanfou = Fanfou(auth=OAuth(oauth_token, oauth_token_secret, CONSUMER_KEY, CONSUMER_SECRET))
