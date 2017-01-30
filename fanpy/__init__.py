@@ -2,7 +2,7 @@
     fanpy
     ~~~~~
     fanpy is a Python tool that allows you to interact with
-    fanfou.com. It is a complete clone from `Python Twitter Tools`.
+    fanfou.com. It is a clone from `Python Twitter Tools`.
 
     :license: MIT.
 """

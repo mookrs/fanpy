@@ -38,16 +38,14 @@ class _DEFAULT(object):
 
 
 class FanfouError(Exception):
-    """
-    Base Exception thrown by the Fanfou object when there is a
+    """Base Exception thrown by the Fanfou object when there is a
     general error interacting with the API.
     """
     pass
 
 
 class FanfouHTTPError(FanfouError):
-    """
-    Exception thrown by the Fanfou object when there is an
+    """Exception thrown by the Fanfou object when there is an
     HTTP error interacting with fanfou.com.
     """
 
@@ -83,8 +81,7 @@ class FanfouHTTPError(FanfouError):
 
 
 class FanfouResponse(object):
-    """
-    Response from a Fanfou request. Behaves like a list or a string
+    """Response from a Fanfou request. Behaves like a list or a string
     (depending on requested format).
     """
 
@@ -126,8 +123,7 @@ def method_for_uri(uri):
 
 
 def build_uri(orig_uriparts, kwargs):
-    """
-    Build the URI from the original uriparts and kwargs. Modifies kwargs.
+    """Build the URI from the original uriparts and kwargs. Modifies kwargs.
 
     :param orig_uriparts: eg: ('statuses', 'user_timeline')
     :param kwargs: eg: {'_id': 'ifanfou'}
@@ -158,7 +154,6 @@ def build_uri(orig_uriparts, kwargs):
 
 
 class FanfouCall(object):
-
     # Delay after HTTP codes 502, 503 or 504.
     FANFOU_UNAVAILABLE_WAIT = 30
 
@@ -234,7 +229,8 @@ class FanfouCall(object):
         if self.auth:
             headers.update(self.auth.generate_headers())
             # Because the method uses multipart POST, OAuth is handled a
-            # little differently. POST or query string parameters are not used when calculating an OAuth signature basestring or signature.
+            # little differently. POST or query string parameters are not
+            # used when calculating an OAuth signature basestring or signature.
             arg_data = self.auth.encode_params(
                 url_base, method, {} if photo else kwargs)
             if method == 'GET' or photo:
@@ -247,7 +243,8 @@ class FanfouCall(object):
             BOUNDARY = b'###Python-Fanfou###'
             bod = []
             bod.append(b'--' + BOUNDARY)
-            # Never omit `filename`, otherwise will meet 'lack of photo parameter' or else errors.
+            # Never omit `filename`, otherwise will meet
+            # 'lack of photo parameter' or else errors.
             bod.append(
                 b'Content-Disposition: form-data; name="photo"; '
                 + b'filename="filename"')
@@ -319,8 +316,7 @@ class FanfouCall(object):
 
 
 class Fanfou(FanfouCall):
-    """
-    Examples::
+    """Examples::
 
         from fanpy import *
 

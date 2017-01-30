@@ -13,8 +13,7 @@ from .oauth import OAuth, write_token_file
 
 
 def get_oauth_pin(oauth_url, open_browser=True):
-    """
-    Prompt the user for the OAuth PIN.
+    """Prompt the user for the OAuth PIN.
 
     By default, a browser will open the authorization page. If `open_browser`
     is false, the authorization URL will just be printed instead.
@@ -51,8 +50,7 @@ Please go to the following URL, authorize the app, and copy the PIN:
 
 
 def oauth_dance(app_name, consumer_key, consumer_secret, token_filename=None, open_browser=True):
-    """
-    Perform the OAuth dance with some command-line prompts. Return the
+    """Perform the OAuth dance with some command-line prompts. Return the
     oauth_token and oauth_token_secret.
 
     Provide the name of your app in `app_name`, your consumer_key, and
