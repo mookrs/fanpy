@@ -13,15 +13,15 @@ from .oauth import OAuth, read_token_file, write_token_file
 from .oauth_dance import oauth_dance
 
 __all__ = [
-    "NoAuth",
-    "OAuth",
-    "oauth_dance",
-    "read_token_file",
-    "Fanfou",
-    "FanfouError",
-    "FanfouHTTPError",
-    "FanfouResponse",
-    "write_token_file",
+    'NoAuth',
+    'OAuth',
+    'oauth_dance',
+    'read_token_file',
+    'Fanfou',
+    'FanfouError',
+    'FanfouHTTPError',
+    'FanfouResponse',
+    'write_token_file',
 ]
 
 __version__ = '0.1.3'
