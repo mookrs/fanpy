@@ -49,7 +49,7 @@ def log_debug(msg):
 
 
 def get_statuses(fanfou, user_id, max_id=None):
-    kwargs = dict(id=user_id, count=2, mode='lite')
+    kwargs = dict(id=user_id, count=60, mode='lite')
     if max_id:
         kwargs['max_id'] = max_id
     n_statuses = 0
