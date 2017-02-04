@@ -90,8 +90,9 @@ from .oauth import OAuth, read_token_file
 from .oauth_dance import oauth_dance
 from .util import print_nicely
 
-CONSUMER_KEY = ''
-CONSUMER_SECRET = ''
+# Registered by mookrs
+CONSUMER_KEY = '1469b495a824c7abb2bf9fd2c75930e8'
+CONSUMER_SECRET = '9095f46ecf5ede903fa79a57263fd153'
 
 OPTIONS = {
     'action': 'friends',
