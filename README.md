@@ -38,7 +38,8 @@ https://github.com/FanfouAPI/FanFouAPIDoc/wiki
 ```python
 from fanpy import *
 
-f = Fanfou(auth=OAuth(oauth_token, oauth_token_secret, consumer_key, consumer_secret))
+f = Fanfou(auth=OAuth(
+    oauth_token, oauth_token_secret, consumer_key, consumer_secret))
 
 # Get your home timeline
 f.statuses.home_timeline()
@@ -107,7 +108,7 @@ fanfou = Fanfou(format='xml')
 
 http://fanfou.com/apps.new
 
-创建成功后，你将会得到相应的 `CONSUMER_KEY` 和 `CONSUMER_SECRET`。
+创建成功后，你将会得到 `CONSUMER_KEY` 和 `CONSUMER_SECRET`。
 
 用户在运行你的程序时，需要将账户授权给你的应用。具体的实现请查看 `fanpy.oauth_dance` 模块。如果你编写的是命令行程序，可以直接使用 `oauth_dance()` 函数。
 
@@ -135,7 +136,7 @@ fanfou.statuses.update(status='Hello, world!')
 
 ## 其他饭友制作的工具
 
-网上还有很多与 `fanpy` 项目类似的工具，`fanpy` 在改造 [Python Twitter Tools](https://github.com/sixohsix/twitter) 的过程从中获取了灵感，列于下方表示感谢，同时以供参考：
+网上还有很多与 `fanpy` 项目类似的工具，`fanpy` 在改造 [Python Twitter Tools](https://github.com/sixohsix/twitter) 的过程从中获取了灵感，列于下方表示感谢，同时以供备用参考：
 
 - [fanfou](https://github.com/akgnah/fanfou.bot/blob/master/fanfou.py) 饭否 OAuth (XAuth) 模块
 - [饭盒](http://www.aoisnow.net/blog/fanhe) Windows 下的饭否用户数据管理工具集
