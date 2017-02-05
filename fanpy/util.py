@@ -1,6 +1,7 @@
 """Internal utility functions."""
 
 import sys
+import time
 
 PY3 = sys.version_info >= (3, 0)
 
@@ -31,3 +32,30 @@ def print_nicely(s):
         sys.stdout.flush()
     else:
         print(s.encode('utf-8'))
+
+
+class Fail(object):
+    """A class to count fails during a repetitive task.
+
+    Args:
+        maximum: An integer for the maximum of fails to allow.
+        exit: An integer for the exit code when maximum of fail is reached.
+
+    Methods:
+        count: Count a fail, exit when maximum of fails is reached.
+        wait: Same as count but also sleep for a given time in seconds.
+    """
+    def __init__(self, maximum=10, exit=1):
+        self.i = maximum
+        self.exit = exit
+
+    def count(self):
+        self.i -= 1
+        if self.i == 0:
+            print('Too many consecutive fails, exit.')
+            sys.exit(self.exit)
+
+    def wait(self, delay=0):
+        self.count()
+        if delay > 0:
+            time.sleep(delay)
