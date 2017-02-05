@@ -19,6 +19,7 @@ setup(
     long_description=open('README.md').read(),
     keywords='fanfou, cli',
     author='mookrs',
+    author_email='mookrs+fanpy@gmail.com',
     url='https://github.com/mookrs/fanpy',
     packages=['fanpy'],
     license='MIT',
