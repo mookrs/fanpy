@@ -7,7 +7,7 @@ python:
   - "3.6"
 sudo: false
 install:
-  - pip install coverage
+  - pip install coveralls
 script:
   - nosetests --with-coverage --cover-package=fanpy
 after_success:
