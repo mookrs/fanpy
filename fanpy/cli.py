@@ -102,10 +102,10 @@ OPTIONS = {
     'length': 20,
     'timestamp': False,
     'datestamp': False,
-    'config-filename': os.environ.get('HOME', os.environ.get('USERPROFILE', ''))
-                       + os.sep + '.fanfou',
-    'oauth-filename': os.environ.get('HOME', os.environ.get('USERPROFILE', ''))
-                      + os.sep + '.fanfou_oauth',
+    'config-filename': os.environ.get('HOME', os.environ.get('USERPROFILE', '')) +
+                       os.sep + '.fanfou',
+    'oauth-filename': os.environ.get('HOME', os.environ.get('USERPROFILE', '')) +
+                      os.sep + '.fanfou_oauth',
     'extra-args': [],
     'invert-split': False,
     'force-ansi': False,
@@ -244,7 +244,7 @@ class AnsiStatusFormatter(object):
             'clear': ansi_formatter.cmd_reset(),
             'hashtag': ansi_formatter.cmd_bold(),
             'profile': ansi_formatter.cmd_underline(),
-            }
+        }
 
         s = None
         try:
@@ -454,15 +454,15 @@ class ReplAction(Action):
 
 
 ACTIONS = {
-    'authorize' : DoNothingAction,
-    'follow'    : FollowAction,
-    'friends'   : FriendsAction,
-    'help'      : HelpAction,
-    'leave'     : LeaveAction,
-    'replies'   : RepliesAction,
-    'search'    : SearchAction,
-    'set'       : SetStatusAction,
-    'repl'      : ReplAction,
+    'authorize': DoNothingAction,
+    'follow': FollowAction,
+    'friends': FriendsAction,
+    'help': HelpAction,
+    'leave': LeaveAction,
+    'replies': RepliesAction,
+    'search': SearchAction,
+    'set': SetStatusAction,
+    'repl': ReplAction,
 }
 
 
@@ -471,7 +471,6 @@ def main(args=sys.argv[1:]):
         arg_options = parse_args(args)
     except GetoptError as e:
         print("I can't do that, {}.".format(e), file=sys.stderr)
-        print(file=sys.stderr)
         sys.exit(1)
 
     config_path = os.path.expanduser(
