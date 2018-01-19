@@ -73,7 +73,7 @@ t.statuses.update(status='Hello, world!', _method='POST')
 with open('example.png', 'rb') as imagefile:
     imagedata = imagefile.read()
 # - Then send the image with a status.
-fanfou.photos.upload(photo=imagedata, status='Upload image.')
+f.photos.upload(photo=imagedata, status='Upload image.')
 ```
 
 ### 使用返回的数据
